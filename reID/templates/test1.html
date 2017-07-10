@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html onselectstart="return false">
+<!-- onselectstart="return false" 禁止页面复制-->
+<head lang="en">
+    /*onselectstart="return false"*/
+    <meta charset="UTF-8">
+    <title>document</title>
+    <!--一共用的就是40到50个单词记住即可-->
+    <!-- div.pic 是创建一个盒子-->
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            background-color: #000;
+        }
+        div.pic{
+            width: 180px;
+            height: 140px; /* 133:200  约等于 4:6  */
+            /*border: 1px dotted #f00;*/
+            margin: 200px auto 0;/*上---左右---下 */
+            position: absolute;
+            top: 0px;
+            left: 500px;
+            transform-style: preserve-3d;
+            transform: perspective(800px) rotateX(-5deg) rotateY(0deg);
+        }
+        div.pic img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 5px; /*加上圆角*/
+            box-shadow: 0px 0px 10px #fff;/*box-shadow 属性向框添加一个或多个阴影*/
+            -webkit-box-reflect: below 10px -webkit-linear-gradient(top,rgba(0,0,0,0) 50%,rgba(0,0,0,0.5) 100%); /*box-reflect倒影属性练习*/
+            /*-webkit-linear-gradient(top,rgba(0,0,0,0),rgba(0,0,0,1) , 这是一个渐变*/
+        }
+        div.pic p{
+            width: 1200px;
+            height: 1200px;
+            background: -webkit-radial-gradient(center center,600px 600px,rgba(255,255,255,0.3),rgba(0,0,0,0));
+            left: 50%;top: 100%;
+            margin-top: -50px;
+            margin-left: -600px;
+            transform: rotateX(90deg);
+            border-radius: 600px;
+        }
+
+        div.container_show{
+            width: 300px;
+            height: 240px;
+            position: absolute;
+            border-radius: 5px; /*加上圆角*/
+            box-shadow: 0px 0px 10px #fff;
+        }
+
+    </style>
+</head>
+<body>
+    <!--div 长方型的区域-->
+    <div id="video1" class="pic">
+        <img src="img/1.jpg" alt="1.jpg"/>
+        <img src="img/2.jpg" alt="2.jpg"/>
+        <img src="img/3.jpg" alt="3.jpg"/>
+        <img src="img/4.jpg" alt="4.jpg"/>
+        <img src="img/5.jpg" alt="5.jpg"/>
+        <img src="img/6.jpg" alt="6.jpg"/>
+        <img src="img/7.jpg" alt="7.jpg"/>
+        <img src="img/8.jpg" alt="8.jpg"/>
+        <img src="img/9.jpg" alt="9.jpg"/>
+        <img src="img/10.jpg" alt="10.jpg"/>
+        <img src="img/11.jpg" alt="11.jpg"/>
+         <p></p> 
+    </div>
+    <div id="container_show1" class="container_show">
+    </div>
+    <div id="video2" class="pic">
+        <img src="img/1.jpg" alt="1.jpg"/>
+        <img src="img/2.jpg" alt="2.jpg"/>
+        <img src="img/6.jpg" alt="6.jpg"/>
+        <img src="img/7.jpg" alt="7.jpg"/>
+        <img src="img/8.jpg" alt="8.jpg"/>
+        <img src="img/9.jpg" alt="9.jpg"/>
+         <p></p>
+    </div>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script>
+        $(function(){
+            var halfH = 900;
+            //设定初始变化值
+            var translate=800;
+            //文档添加鼠标滚轮事件，demo没写兼容，不支持火狐
+
+            /*
+            document.addEventListener("mousewheel",function(e){  //缩放
+                var distance=50 //每次滚轮缩放变化值
+                if(e.wheelDelta>0){      //方向
+                   clearInterval(play)
+                   translate+=distance    //perspective值变化              
+                   $("div.pic").css({
+                            transform:'perspective('+translate+'px) rotateX('+toX+'deg)  rotateY('+toY+'deg)'
+                   });  //css3变化
+                     
+                }else if(e.wheelDelta<0){
+                    clearInterval(play)
+                   translate-=distance                
+                   $("div.pic").css({
+                            transform:'perspective('+translate+'px) rotateX('+toX+'deg)  rotateY('+toY+'deg)'
+                   });
+                }
+            })*/
+
+            //var video1 = document.getElementById("video1");
+            //var video2 = document.getElementById("video2");
+            
+            console.log($("#video1").children()[0]);
+            //$("#container_show1").append($("#video1").children()[0])
+
+            $("#container_show1").css({
+                top: halfH - 300 + 'px',
+                left: 500 + 'px',
+                'background-image' : "url(" + $("#video1").children()[0].src + ")"
+                //'background-size' : imgWidth*multiple+"px "+imgHieght*multiple+"px"
+            })
+
+            $("#video2").css({
+                top: halfH + 'px'
+            });
+            var all_vedio = [$("#video1"), $("#video2")];
+            //console.log($("#video1").children().length);
+
+            var imgL = [$("#video1").children().length, $("#video2").children().length];// $("div.pic img").size();  //img数量
+//            alert(imgL);
+            var deg = [360 / imgL[0], 360 / imgL[1]];   //角度
+            var toY = [0, 0], toX = [-5, -5];
+            var xN = [0, 0], yN = [0, 0];
+            var play = null;
+/*
+            $("div.pic img").each(function(i){
+                $(this).css({
+                    'transform':'rotateY('+i*deg+'deg) translateZ(350px)'  //css设置，分别设定变化角度，同样的z轴变化，形成一个圆
+                });
+                $(this).attr("ondragstart","return false");
+                //浏览器禁止拖拽功能
+            });
+*/
+            all_vedio.forEach(function(vedio, N) {
+                //console.log(vedio.children());
+                vedio.children().each(function(i) {
+                    $(this).css({
+                        'transform':'rotateY('+i*deg[N]+'deg) translateZ(' + imgL[N]*30 + 'px)'  //css设置，分别设定变化角度，同样的z轴变化，形成一个圆
+                    });
+                    $(this).attr("ondragstart","return false");
+                    //浏览器禁止拖拽功能
+                });
+            });
+
+            var N = 0;
+            $(document).mousedown(function(event) {
+                var e = event || window.event;
+                //var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+                var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+                //var cx = e.pageX || e.clientX + scrollX;
+                var cy = e.pageY || e.clientY + scrollY;
+                //alert(cy + ' ' + window.screen.availHeight);
+                N = 0;
+                if (cy > halfH) N = 1;         
+                vedio = all_vedio[N];
+            
+                /*console.log("shu biao an xia le !");*/
+                var x_ = event.clientX;
+                var y_ = event.clientY;
+                clearInterval(play);
+                console.log(this);
+
+                $(document).bind("mousemove",(function(ev){
+                  /* console.log('yi dong !');*/
+                    var x = ev.clientX;
+                    var y = ev.clientY;
+                    xN[N] = x - x_;
+                    yN[N] = y - y_;
+                    toY[N] += xN[N] * 0.2;
+                    toX[N] -= yN[N] * 0.1;
+
+                    //$("body").append('<div style="width:5px;height:5px;background:#f00;position:absolute;top:"+y+"px;left:"+x+"px;"></div>')/*打点计数器*/
+                    vedio.css({
+                       transform:'perspective('+translate+'px) rotateX('+toX[N]+'deg)  rotateY('+toY[N]+'deg)'
+                    });
+                    x_ = ev.clientX;
+                    y_ = ev.clientY;
+                }));
+            }).mouseup(function(){
+                    console.log("remove");  
+                    $(this).unbind("mousemove");
+                    var play = setInterval(function(){
+                        xN[N] *= 0.8;
+                        yN[N] *= 0.8;
+                        if ( Math.abs(xN[N]) < 1 && Math.abs(yN[N]) < 1 ) //Math绝对值
+                            clearInterval(play);
+                        toY[N] += xN[N]*0.2;
+                        toX[N] -= yN[N]*0.1;
+                        vedio.css({
+                            transform:'perspective('+translate+'px) rotateX('+toX[N]+'deg)  rotateY('+toY[N]+'deg)'
+                        });
+                    },30);
+                    //return play
+            });     
+
+            $("div.pic img").click(function(){
+                var imgsrc = this.src;
+                console.log(imgsrc);
+                $("#container_show1").css({
+                    'background-image' : "url(" + imgsrc + ")"
+                })
+            });
+        });
+    </script>
+</body>
+</html>
